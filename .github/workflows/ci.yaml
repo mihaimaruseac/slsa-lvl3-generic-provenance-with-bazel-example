@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3  # TODO(mihaimaruseac): pin by hash
+      - name: Setup bazelisk
+        uses:  bazelbuild/setup-bazelisk@95c9bf48d0c570bb3e28e57108f3450cd67c1a44 # v2.0.0
+        with:
+          bazelisk-version: "1.11"
+      - name: Build artifacts
+        run: |
+          bazel build //...
+          cp bazel-bin/src/{fib,hello} .
+      - name: Generate subject for provenance
+        id: hash
+        run: |
+          set -euo pipefail
+          sha256sum fib hello > checksums
+          cat checksums  # TODO(mihaimaruseac): testing only!
+          echo "::set-output name=hashes::$(cat checksums | base64 -w0)"
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read
+      id-token: write
+      contents: read
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.1.1  # TODO(mihaimaruseac): pin by hash
+    with:
+      base64-subjects: "${{ needs.build.outputs.hashes }}"
+      upload-assets: true
