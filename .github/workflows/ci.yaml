@@ -26,7 +26,6 @@ jobs:
         run: |
           set -euo pipefail
           sha256sum fib hello > checksums
-          cat checksums  # TODO(mihaimaruseac): testing only!
           echo "::set-output name=hashes::$(cat checksums | base64 -w0)"
       - name: Upload artifacts (1/2)
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # tag=v3.1.0
@@ -52,7 +51,7 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.1.1  # TODO(mihaimaruseac): pin by hash
     with:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
-      #upload-assets: true
+      #upload-assets: true  # TODO(mihaimaruseac): Resolve with new release
 
   release:
     needs: [build, provenance]
