@@ -26,6 +26,20 @@ jobs:
           sha256sum fib hello > checksums
           cat checksums  # TODO(mihaimaruseac): testing only!
           echo "::set-output name=hashes::$(cat checksums | base64 -w0)"
+      - name: Upload artifacts (1/2)
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # tag=v3.1.0
+        with:
+          name: fib
+          path: fib
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload artifacts (2/2)
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # tag=v3.1.0
+        with:
+          name: hello
+          path: hello
+          if-no-files-found: error
+          retention-days: 5
 
   provenance:
     needs: [build]
@@ -38,3 +52,23 @@ jobs:
     with:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
       upload-assets: true
+
+  release:
+    needs: [build, provenance]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download fib artifact
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # tag=v2.1.0
+        with:
+          name: fib
+      - name: Download hello artifact
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # tag=v2.1.0
+        with:
+          name: hello
+      - name: Upload assets
+        uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5 # v0.1.14
+        with:
+          files: |
+            fib
+            hello
