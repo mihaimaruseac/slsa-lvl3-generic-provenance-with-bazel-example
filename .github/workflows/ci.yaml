@@ -48,10 +48,10 @@ jobs:
       actions: read
       id-token: write
       contents: read
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.1.1  # TODO(mihaimaruseac): pin by hash
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
     with:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
-      #upload-assets: true  # TODO(mihaimaruseac): Resolve with new release
+      upload-assets: true
 
   release:
     needs: [build, provenance]
