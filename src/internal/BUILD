@@ -14,3 +14,10 @@ cc_binary(
   srcs = ["test.cc"],
   deps = [":lib"],
 )
+
+cc_binary(
+  name = "runfiles",
+  srcs = ["runfiles.cc"],
+  deps = ["@bazel_tools//tools/cpp/runfiles"],
+  data = ["test.txt"],
+)

@@ -1,0 +1,3 @@
+This is file that must be present at runtime.
+We include it via the runfiles option in Bazel.
+Without Bazel, generating the proper strings would be a pain.
