@@ -1,3 +1,4 @@
+// LICENSE maybe?
 #include <iostream>
 
 // Basic fibonacci
