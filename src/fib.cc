@@ -13,5 +13,6 @@ int main(int argc, char** argv) {
   std::cout << "fib( 5) = " << fib( 5) << "\n";
   std::cout << "fib( 7) = " << fib( 7) << "\n";
   std::cout << "fib(11) = " << fib(11) << "\n";
+  std::cout << "fib(12) = " << fib(12) << "\n";
   return 0;
 }
